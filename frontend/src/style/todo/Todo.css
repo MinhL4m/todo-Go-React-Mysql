@@ -15,12 +15,16 @@
 }
 
 .list .card {
-  width: 70%;
-  margin-bottom: 4vh;
+  width: 50%;
+  margin: 4vh auto;
 }
 
 .list .card:first-child {
   margin-top: 4vh;
+}
+
+.list .card-body {
+  text-align: center;
 }
 
 .list .card .donebtn {
@@ -47,5 +51,24 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.addbtn--btn {
+  background-color: #14AF64;
+  color: #fff;
+  padding: 1rem 2.5rem;
+}
+
+.addbtn--btn:hover, .addbtn--btn:focus, .addbtn--btn:active {
+  background-color: #048546 !important;
+}
+
+.addbtn--form {
+  padding: 1rem 5rem;
+}
+
+.todo-header {
+  margin-top: 10vh;
+  text-align: center;
 }
 /*# sourceMappingURL=Todo.css.map */

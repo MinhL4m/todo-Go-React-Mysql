@@ -5,29 +5,56 @@
     align-items: center;
 
 
-    .card{
-        width: 70%;
-        margin-bottom: 4vh;
-        
-        &:first-child{
+    .card {
+        width: 50%;
+        margin: 4vh auto;
+
+        &:first-child {
             margin-top: 4vh;
         }
 
-        .donebtn{
+        &-body {
+            text-align: center;
+        }
+
+        .donebtn {
             background: rgba(8, 184, 2, 0.829)
         }
     }
 
-    .done{
+    .done {
         background-color: rgba(101, 233, 61, 0.425)
     }
 }
 
-.addbtn{
+.addbtn {
     margin-top: 4vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    &--btn {
+        background-color: #14AF64;
+        color: #fff;
+        padding: 1rem 2.5rem;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: rgb(4, 133, 70) !important;
+        }
+    }
+
+
+
+    &--form {
+        padding: 1rem 5rem;
+    }
+}
+
+.todo-header {
+    margin-top: 10vh;
+    text-align: center;
 }
