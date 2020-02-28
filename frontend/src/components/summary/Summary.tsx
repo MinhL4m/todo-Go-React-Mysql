@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChartContainer as Chart } from './ChartContainer';
+import { NothingSVG } from './NothingSVG';
 
 interface SummaryProps {}
 
@@ -11,17 +12,16 @@ export const Summary: React.FC<SummaryProps> = ({}) => {
 	}, []);
 
 	const fetchData = async () => {
-        try{
-            const response = await fetch('http://url');
-            if (response.status === 200) {
-                console.log('what');
-                const data = await response.json();
-                setData(data);
-            }
-        }catch{
-            console.log('catch error')
-        }
-		
+		try {
+			const response = await fetch('http://url');
+			if (response.status === 200) {
+				console.log('what');
+				const data = await response.json();
+				setData(data);
+			}
+		} catch (err) {
+			console.log('catch error');
+		}
 	};
 
 	const checkEmpty = () => {
@@ -36,7 +36,10 @@ export const Summary: React.FC<SummaryProps> = ({}) => {
 					<Chart data={data} />
 				</div>
 			) : (
-				<h2>Nothing to show</h2>
+				<div className='nothing'>
+					<h2>Nothing to show</h2>
+					<NothingSVG />
+				</div>
 			)}
 		</div>
 	);

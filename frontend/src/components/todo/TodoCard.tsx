@@ -37,7 +37,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done
 	};
 
 	const toggleDone = async (status: boolean) => {
-		try{
+		try {
 			const response = await fetch('url', {
 				method: 'PUT',
 				headers: {
@@ -53,14 +53,13 @@ export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done
 			} else {
 				console.log('Error');
 			}
-		}catch{
-			console.log('catch error')
+		} catch (err) {
+			console.log('catch error');
 		}
-		
 	};
 
 	const delFunc = async () => {
-		try{
+		try {
 			const response = await fetch('url', {
 				method: 'DELETE',
 				headers: {
@@ -75,10 +74,9 @@ export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done
 			} else {
 				console.log('Error');
 			}
-		}catch{
-			console.log('catch error')
+		} catch (err) {
+			console.log('catch error');
 		}
-		
 	};
 
 	return (

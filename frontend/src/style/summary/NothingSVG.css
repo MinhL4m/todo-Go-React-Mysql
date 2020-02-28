@@ -1,0 +1,27 @@
+#vector1 {
+    animation: vector 1.5s infinite;
+}
+
+#vector2 {
+    animation: vector 1.5s infinite;
+    animation-delay: 0.75s;
+}
+
+#vector3 {
+    animation: vector 1.5s infinite;
+    animation-delay: 1.25s;
+}
+
+@keyframes vector {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
