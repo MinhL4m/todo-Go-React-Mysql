@@ -1,109 +1,139 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	// "encoding/json"
-	// "log"
-	// "net/http"
+	"log"
+	"net/http"
+
 	"github.com/gorilla/mux"
-	// "strconv"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/rs/cors"
+	"strconv"
 )
 
-func main(){
-	fmt.Println("ok")
+type Todo struct {
+	Id          int    `gorm:"unique_index;column:id" json: "id"`
+	Title       string `gorm:"not null;column:title" json: "title"`
+	Description string `gorm:"not null;colum:description" json: "description"`
+	Done        bool   `gorm:"column:done" json: "done"`
 }
 
-// // Todo Struct
-// type Todo struct {
-// 	ID			string	`json: "id"`
-// 	Title		string	`json: "title"`
-// 	Description	string	`json: "description"`
-// 	Done		bool	`json: "done"`
-// 	Date		string	`json: "date"`
-// }
+type Summary struct {
+	Undone int
+	Done   int
+}
 
-// // Mock data
-// var todos []Todo
-// var taskDone []int
+const (
+	databaseType = "mysql"
+	database     = "root:password@tcp(localhost:3306)/todo"
+)
 
-// // Function return list of todo as json
-// func getTodos(w http.ResponseWriter, r *http.Request){
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(todos)
-// }
+func getTodos(w http.ResponseWriter, r *http.Request) {
 
-// // Function return summary of 12 month as json
-// func getSummary(w http.ResponseWriter, r *http.Request){
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(taskDone)
-// }
+	db, err := gorm.Open(databaseType, database)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("fail to connect")
+	}
 
-// // Function delete todo that has id match id pass from url param
-// func deleteTodo(w http.ResponseWriter, r *http.Request){
-// 	w.Header().Set("Content-Type", "application/json")
-// 	params := mux.Vars(r)
-// 	for index, item := range todos {
-// 		if item.ID == params["id"]{
-// 			//todos[:index] get from 0 to index (exclude index)
-// 			//todos[index+1:] get from index + 1 to the end
-// 			todos = append(todos[:index], todos[index+1:]...) // ... is spread oparation
-// 			break
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(todos)
-// }
+	defer db.Close()
 
-// // Function toggle todo that has id match id pass from url param
-// func toggleTodo(w http.ResponseWriter, r *http.Request){
-// 	w.Header().Set("Content-Type", "application/json")
-// 	params := mux.Vars(r)
-// 	for index, item := range todos {
-// 		if item.ID == params["id"] {
-// 			//check and toogle done
-// 			//since this is slice, can change directly the field
-// 			if todos[index].Done {
-// 				todos[index].Done = false
-// 			}else{
-// 				todos[index].Done = true
-// 			}
-// 			json.NewEncoder(w).Encode(true)
-// 			return
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(false)
-// }
+	var todo []Todo
 
-// // Function create new todo and append into the list
-// func createTodos(w http.ResponseWriter, r *http.Request){
-// 	w.Header().Set("Content-Type","application/json")
-// 	var todo Todo
-// 	len := len(todos) - 1
-// 	_ = json.NewDecoder(r.Body).Decode(&todo)
-// 	ID, _  := strconv.Atoi(todos[len].ID)
-// 	todo.ID = strconv.Itoa(ID + 1)
-// 	todos = append(todos, todo)
-// 	json.NewEncoder(w).Encode(true)
-// }
+	db.Find(&todo)
+	json.NewEncoder(w).Encode(todo)
+}
 
-// func main(){
-// 	// Init Router 
-// 	router := mux.NewRouter()
+func createTodos(w http.ResponseWriter, r *http.Request) {
+	db, err := gorm.Open(databaseType, database)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("fail to connect")
+	}
 
-// 	// Mock Data
-// 	todos = append(todos, Todo{ID: "1", Title: "Move", Description: "move a to b", Done: false, Date: "12-02-2020"})
-// 	todos = append(todos, Todo{ID: "2", Title: "Paste", Description: "paste a to b", Done: false, Date: "12-03-2020"})
-// 	todos = append(todos, Todo{ID: "3", Title: "Cut", Description: "cut a to b", Done: true, Date: "12-09-2020"})
-// 	todos = append(todos, Todo{ID: "4", Title: "Delete", Description: "delete a to b", Done: false, Date: "12-10-2020"})
+	defer db.Close()
+	var todo Todo
+	_ = json.NewDecoder(r.Body).Decode(&todo)
 
-// 	taskDone = []int{4,7,5,9,3,4,3,4,5,2,4,5}
+	db.Create(&todo)
 
-// 	// Route and Handler
-// 	router.HandleFunc("/api/todos", getTodos).Methods("GET")
-// 	router.HandleFunc("/api/summary", getSummary).Methods("GET")
-// 	router.HandleFunc("/api/todos/{id}", deleteTodo).Methods("DELETE")
-// 	router.HandleFunc("/api/todos/{id}", toggleTodo).Methods("PUT")
-// 	router.HandleFunc("/api/todos", createTodos).Methods("POST")
+	json.NewEncoder(w).Encode(todo)
+}
 
-// 	// Set listen to Port 8000
-// 	log.Fatal(http.ListenAndServe(":8000", router))
-// }
+func toggleTodo(w http.ResponseWriter, r *http.Request) {
+	db, err := gorm.Open(databaseType, database)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("fail to connect")
+	}
+
+	defer db.Close()
+
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var todo Todo
+	fmt.Println(params["id"])
+	db.First(&todo, params["id"])
+
+	todo.Done = !todo.Done
+
+	db.Save(&todo)
+	json.NewEncoder(w).Encode(todo)
+}
+
+func deleteTodo(w http.ResponseWriter, r *http.Request) {
+	db, err := gorm.Open(databaseType, database)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("fail to connect")
+	}
+
+	defer db.Close()
+
+	w.Header().Set("Content-Type","application/json")
+	
+	var todo Todo
+	var params = mux.Vars(r)
+	todo.Id,_ = strconv.Atoi(params["id"])
+	db.Delete(todo)
+	json.NewEncoder(w).Encode(todo)
+}
+
+func getSummary(w http.ResponseWriter, r *http.Request) {
+	db, err := gorm.Open(databaseType, database)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("fail to connect")
+	}
+
+	defer db.Close()
+
+	var undone int
+	var done int
+
+	db.Model(&Todo{}).Where("done = ?", 0).Count(&undone)
+	db.Model(&Todo{}).Where("done = ?", 1).Count(&done)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(Summary{undone, done})
+}
+
+func main() {
+
+	//Init Router
+	router := mux.NewRouter()
+
+	//Add Handler for each path
+	router.HandleFunc("/api/todos", getTodos).Methods("GET")
+	router.HandleFunc("/api/todos", createTodos).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/todos/{id}", toggleTodo).Methods("PUT", "OPTIONS")
+	router.HandleFunc("/api/todos/{id}", deleteTodo).Methods("DELETE")
+	router.HandleFunc("/api/summary", getSummary).Methods("GET")
+
+	handler := cors.Default().Handler(router)
+
+	// listen to port 8080 and router take care of request
+	log.Fatal(http.ListenAndServe(":8080", handler))
+}
