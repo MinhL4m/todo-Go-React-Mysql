@@ -74,7 +74,6 @@ func toggleTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var todo Todo
-	fmt.Println(params["id"])
 	db.First(&todo, params["id"])
 
 	todo.Done = !todo.Done
