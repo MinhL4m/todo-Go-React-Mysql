@@ -5,10 +5,10 @@ import { AddButton } from './AddButton';
 interface TodoProps {}
 
 interface Todo {
-	id: number;
-	title: string;
-	description: string;
-	done: boolean;
+	Id: number;
+	Title: string;
+	Description: string;
+	Done: boolean;
 }
 
 export const Todo: React.FC<TodoProps> = ({}) => {
@@ -21,9 +21,9 @@ export const Todo: React.FC<TodoProps> = ({}) => {
 
 	const fetchData = async () => {
 		try {
-			const response = await fetch('http://url');
+			const response = await fetch('http://localhost:8080/api/todos');
 			if (response.status === 200) {
-				console.log('what');
+				console.log('here');
 				const data = await response.json();
 				setList(data);
 			}
@@ -39,7 +39,7 @@ export const Todo: React.FC<TodoProps> = ({}) => {
 				<h2 className="todo-header">Set new Todo</h2>
 			) : (
 				<div className="list">
-					{list.map((todo: Todo) => <TodoCard key={todo.id} {...todo} setList={setList} list={list} />)}
+					{list.map((todo: Todo) => <TodoCard key={todo.Id} {...todo} setList={setList} list={list} />)}
 				</div>
 			)}
 		</div>

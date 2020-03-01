@@ -2,29 +2,29 @@ import React from 'react';
 import { Card, CardTitle, CardBody, ButtonGroup, Button } from 'shards-react';
 
 interface TodoCardProps {
-	id: number;
-	title: string;
-	description: string;
-	done: boolean;
+	Id: number;
+	Title: string;
+	Description: string;
+	Done: boolean;
 	setList: React.Dispatch<
 		React.SetStateAction<
 			{
-				id: number;
-				title: string;
-				description: string;
-				done: boolean;
+				Id: number;
+				Title: string;
+				Description: string;
+				Done: boolean;
 			}[]
 		>
 	>;
 	list: {
-		id: number;
-		title: string;
-		description: string;
-		done: boolean;
+		Id: number;
+		Title: string;
+		Description: string;
+		Done: boolean;
 	}[];
 }
 
-export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done, setList, list }) => {
+export const TodoCard: React.FC<TodoCardProps> = ({ Id, Title, Description, Done, setList, list }) => {
 	const onClick = (e: Event) => {
 		const target = e.target as HTMLButtonElement;
 		if (target.name === 'done') {
@@ -43,12 +43,12 @@ export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: id, done: status })
+				body: JSON.stringify({ id: Id, done: status })
 			});
 			if (response.status === 200) {
 				const data = await response.json();
-				const index = list.findIndex((todo) => todo.id === id);
-				list = list.filter((todo) => todo.id !== id);
+				const index = list.findIndex((todo) => todo.Id === Id);
+				list = list.filter((todo) => todo.Id !== Id);
 				setList([ ...list.slice(0, index), data, ...list.slice(index + 1) ]);
 			} else {
 				console.log('Error');
@@ -65,11 +65,11 @@ export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: id })
+				body: JSON.stringify({ id: Id })
 			});
 			if (response.status === 200) {
-				const index = list.findIndex((todo) => todo.id === id);
-				list = list.filter((todo) => todo.id !== id);
+				const index = list.findIndex((todo) => todo.Id === Id);
+				list = list.filter((todo) => todo.Id !== Id);
 				setList([ ...list.slice(0, index), ...list.slice(index + 1) ]);
 			} else {
 				console.log('Error');
@@ -80,12 +80,12 @@ export const TodoCard: React.FC<TodoCardProps> = ({ id, title, description, done
 	};
 
 	return (
-		<Card className={done ? '' : 'done'} onClick={onClick}>
+		<Card className={Done ? 'done' : ''} onClick={onClick}>
 			<CardBody>
-				<CardTitle>{title}</CardTitle>
-				<p>{description}</p>
+				<CardTitle>{Title}</CardTitle>
+				<p>{Description}</p>
 				<ButtonGroup className="mr-2">
-					{done ? (
+					{!Done ? (
 						<Button theme="success" name="done">
 							Done
 						</Button>

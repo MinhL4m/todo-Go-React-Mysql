@@ -3,18 +3,18 @@ import { Button, Collapse, Form, FormGroup, FormInput, Alert } from 'shards-reac
 
 interface AddButtonProps {
 	list: {
-		id: number;
-		title: string;
-		description: string;
-		done: boolean;
+		Id: number;
+		Title: string;
+		Description: string;
+		Done: boolean;
 	}[];
 	setList: React.Dispatch<
 		React.SetStateAction<
 			{
-				id: number;
-				title: string;
-				description: string;
-				done: boolean;
+				Id: number;
+				Title: string;
+				Description: string;
+				Done: boolean;
 			}[]
 		>
 	>;
@@ -37,28 +37,31 @@ export const AddButton: React.FC<AddButtonProps> = ({ list, setList }) => {
 			return;
 		}
 		setCollapse(false);
-		setTitle('');
-		setDescription('');
-		const response = await fetch('url', {
-			method: 'POST',
+		console.log(title);
+		const response = await fetch('http://localhost:8080/api/todos', {
 			headers: {
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ title: title, description: description })
+			mode: 'cors',
+			method: 'POST',
+			body: JSON.stringify({ Title: title, Description: description, Done: 0 })
 		});
 
 		if (response.status === 200) {
 			const data = (await response.json()) as {
-				id: number;
-				title: string;
-				description: string;
-				done: boolean;
+				Id: number;
+				Title: string;
+				Description: string;
+				Done: boolean;
 			};
 
 			setList([ ...list, data ]);
 		} else {
 			setError(true);
 		}
+		setTitle('');
+		setDescription('');
 	};
 
 	const onChangeTitle = (e: Event) => {

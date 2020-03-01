@@ -25,11 +25,11 @@
   height: 450px !important;
 }
 
-.summary .h2 {
-  text-align: center;
-}
-
 .summary .nothing {
   margin-top: 5vh;
+}
+
+.summary .nothing h2 {
+  text-align: center;
 }
 /*# sourceMappingURL=Summary.css.map */
