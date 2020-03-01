@@ -27,29 +27,29 @@ interface TodoCardProps {
 export const TodoCard: React.FC<TodoCardProps> = ({ Id, Title, Description, Done, setList, list }) => {
 	const onClick = (e: Event) => {
 		const target = e.target as HTMLButtonElement;
-		if (target.name === 'done') {
-			toggleDone(true);
-		} else if (target.name === 'redo') {
-			toggleDone(false);
+		if (target.name === 'done' || target.name === 'redo') {
+			toggleDone();
 		} else if (target.name === 'delete') {
 			delFunc();
 		}
 	};
 
-	const toggleDone = async (status: boolean) => {
+	const toggleDone = async () => {
 		try {
-			const response = await fetch('url', {
+			const response = await fetch(`http://localhost:8080/api/todos/${Id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: Id, done: status })
+				credentials: 'include',
+				mode: 'cors',
+				body: JSON.stringify({ Id })
 			});
 			if (response.status === 200) {
 				const data = await response.json();
 				const index = list.findIndex((todo) => todo.Id === Id);
 				list = list.filter((todo) => todo.Id !== Id);
-				setList([ ...list.slice(0, index), data, ...list.slice(index + 1) ]);
+				setList([ ...list.slice(0, index), data, ...list.slice(index) ]);
 			} else {
 				console.log('Error');
 			}
@@ -60,12 +60,13 @@ export const TodoCard: React.FC<TodoCardProps> = ({ Id, Title, Description, Done
 
 	const delFunc = async () => {
 		try {
-			const response = await fetch('url', {
+			const response = await fetch(`http://localhost:8080/api/todos/${Id}`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: Id })
+				mode: 'cors',
+				credentials: 'include'
 			});
 			if (response.status === 200) {
 				const index = list.findIndex((todo) => todo.Id === Id);

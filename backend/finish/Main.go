@@ -132,8 +132,17 @@ func main() {
 	router.HandleFunc("/api/todos/{id}", deleteTodo).Methods("DELETE")
 	router.HandleFunc("/api/summary", getSummary).Methods("GET")
 
-	handler := cors.Default().Handler(router)
+	
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowCredentials: true,
+		Debug: true,
+		AllowedMethods: []string{"POST","PUT","GET","DELETE"},
+	})
+
+	handler := cors.Default().Handler(router)
+	handler = c.Handler(handler)
 	// listen to port 8080 and router take care of request
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }

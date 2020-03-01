@@ -13,11 +13,11 @@ export const Summary: React.FC<SummaryProps> = ({}) => {
 
 	const fetchData = async () => {
 		try {
-			const response = await fetch('http://url');
+			const response = await fetch('http://localhost:8080/api/summary');
 			if (response.status === 200) {
 				console.log('what');
 				const data = await response.json();
-				setData(data);
+				setData([data.Done, data.Undone]);
 			}
 		} catch (err) {
 			console.log('catch error');
